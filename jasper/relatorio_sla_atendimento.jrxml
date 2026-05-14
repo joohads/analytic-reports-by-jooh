@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
               name="relatorio_sla_atendimento"
               pageWidth="595"
               pageHeight="842"
@@ -10,43 +11,178 @@
               rightMargin="20"
               topMargin="20"
               bottomMargin="20">
+
+    <!-- ===================== -->
+    <!-- ESTILOS               -->
+    <!-- ===================== -->
+
     <style name="Title" fontName="SansSerif" fontSize="18" isBold="true" forecolor="#4A148C"/>
-    <style name="Header" fontName="SansSerif" fontSize="10" isBold="true" forecolor="#FFFFFF" backcolor="#7B1FA2" mode="Opaque"/>
+
+    <style name="Header" fontName="SansSerif" fontSize="10" isBold="true"
+           forecolor="#FFFFFF" backcolor="#7B1FA2" mode="Opaque"/>
+
     <style name="Detail" fontName="SansSerif" fontSize="10" forecolor="#212121"/>
+
+    <style name="KPI" fontName="SansSerif" fontSize="11" isBold="true" forecolor="#263238"/>
+
+    <!-- ===================== -->
+    <!-- CAMPOS               -->
+    <!-- ===================== -->
 
     <field name="fila" class="java.lang.String"/>
     <field name="totalAtendimentos" class="java.lang.Long"/>
     <field name="dentroSla" class="java.lang.Long"/>
     <field name="tempoMedioResolucaoHoras" class="java.math.BigDecimal"/>
 
+    <!-- ===================== -->
+    <!-- VARIÁVEIS GLOBAIS    -->
+    <!-- ===================== -->
+
+    <variable name="TOTAL_ATENDIMENTOS" class="java.lang.Long" calculation="Sum">
+        <variableExpression><![CDATA[$F{totalAtendimentos}]]></variableExpression>
+    </variable>
+
+    <variable name="TOTAL_DENTRO_SLA" class="java.lang.Long" calculation="Sum">
+        <variableExpression><![CDATA[$F{dentroSla}]]></variableExpression>
+    </variable>
+
+    <variable name="PERCENTUAL_SLA" class="java.lang.Double">
+        <variableExpression><![CDATA[
+            ($V{TOTAL_ATENDIMENTOS} == 0)
+            ? 0
+            : ($V{TOTAL_DENTRO_SLA} * 100.0) / $V{TOTAL_ATENDIMENTOS}
+        ]]></variableExpression>
+    </variable>
+
+    <variable name="MEDIA_TEMPO_GERAL" class="java.math.BigDecimal" calculation="Average">
+        <variableExpression><![CDATA[$F{tempoMedioResolucaoHoras}]]></variableExpression>
+    </variable>
+
+    <!-- ===================== -->
+    <!-- TITLE                 -->
+    <!-- ===================== -->
+
     <title>
-        <band height="64">
+        <band height="70">
+
             <staticText>
                 <reportElement style="Title" x="0" y="0" width="555" height="30"/>
                 <text><![CDATA[Relatório de SLA de Atendimento]]></text>
             </staticText>
-            <staticText>
-                <reportElement x="0" y="34" width="555" height="18"/>
-                <text><![CDATA[Modelo operacional genérico, sem dados pessoais ou corporativos reais]]></text>
-            </staticText>
+
+            <textField>
+                <reportElement x="0" y="35" width="555" height="15"/>
+                <textFieldExpression><![CDATA[
+                    "Análise operacional de filas e performance de atendimento"
+                ]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="50" width="555" height="15"/>
+                <textFieldExpression><![CDATA[
+                    "Modelo genérico - BI / Dashboard SLA"
+                ]]></textFieldExpression>
+            </textField>
+
         </band>
     </title>
 
+    <!-- ===================== -->
+    <!-- SUMMARY (KPIs)       -->
+    <!-- ===================== -->
+
+    <summary>
+        <band height="90">
+
+            <textField>
+                <reportElement style="KPI" x="0" y="10" width="200" height="20"/>
+                <textFieldExpression><![CDATA[
+                    "Total Atendimentos: " + $V{TOTAL_ATENDIMENTOS}
+                ]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement style="KPI" x="0" y="30" width="200" height="20"/>
+                <textFieldExpression><![CDATA[
+                    "Dentro SLA: " + $V{TOTAL_DENTRO_SLA}
+                ]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement style="KPI" x="0" y="50" width="200" height="20"/>
+                <textFieldExpression><![CDATA[
+                    "SLA (%): " + $V{PERCENTUAL_SLA}
+                ]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement style="KPI" x="0" y="70" width="250" height="20"/>
+                <textFieldExpression><![CDATA[
+                    "Tempo médio geral (h): " + $V{MEDIA_TEMPO_GERAL}
+                ]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </summary>
+
+    <!-- ===================== -->
+    <!-- HEADER DA TABELA      -->
+    <!-- ===================== -->
+
     <columnHeader>
-        <band height="22">
-            <staticText><reportElement style="Header" x="0" y="0" width="160" height="22"/><text><![CDATA[Fila]]></text></staticText>
-            <staticText><reportElement style="Header" x="160" y="0" width="130" height="22"/><text><![CDATA[Atendimentos]]></text></staticText>
-            <staticText><reportElement style="Header" x="290" y="0" width="120" height="22"/><text><![CDATA[Dentro SLA]]></text></staticText>
-            <staticText><reportElement style="Header" x="410" y="0" width="145" height="22"/><text><![CDATA[Tempo médio (h)]]></text></staticText>
+        <band height="25">
+
+            <staticText>
+                <reportElement style="Header" x="0" y="0" width="150" height="25"/>
+                <text><![CDATA[Fila]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement style="Header" x="150" y="0" width="120" height="25"/>
+                <text><![CDATA[Atendimentos]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement style="Header" x="270" y="0" width="120" height="25"/>
+                <text><![CDATA[Dentro SLA]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement style="Header" x="390" y="0" width="165" height="25"/>
+                <text><![CDATA[Tempo médio (h)]]></text>
+            </staticText>
+
         </band>
     </columnHeader>
 
+    <!-- ===================== -->
+    <!-- DETAIL               -->
+    <!-- ===================== -->
+
     <detail>
-        <band height="20">
-            <textField><reportElement style="Detail" x="0" y="0" width="160" height="20"/><textFieldExpression><![CDATA[$F{fila}]]></textFieldExpression></textField>
-            <textField><reportElement style="Detail" x="160" y="0" width="130" height="20"/><textFieldExpression><![CDATA[$F{totalAtendimentos}]]></textFieldExpression></textField>
-            <textField><reportElement style="Detail" x="290" y="0" width="120" height="20"/><textFieldExpression><![CDATA[$F{dentroSla}]]></textFieldExpression></textField>
-            <textField pattern="#0.00"><reportElement style="Detail" x="410" y="0" width="145" height="20"/><textFieldExpression><![CDATA[$F{tempoMedioResolucaoHoras}]]></textFieldExpression></textField>
+        <band height="22">
+
+            <textField>
+                <reportElement style="Detail" x="0" y="0" width="150" height="20"/>
+                <textFieldExpression><![CDATA[$F{fila}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement style="Detail" x="150" y="0" width="120" height="20"/>
+                <textFieldExpression><![CDATA[$F{totalAtendimentos}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement style="Detail" x="270" y="0" width="120" height="20"/>
+                <textFieldExpression><![CDATA[$F{dentroSla}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#0.00">
+                <reportElement style="Detail" x="390" y="0" width="165" height="20"/>
+                <textFieldExpression><![CDATA[$F{tempoMedioResolucaoHoras}]]></textFieldExpression>
+            </textField>
+
         </band>
     </detail>
+
 </jasperReport>
