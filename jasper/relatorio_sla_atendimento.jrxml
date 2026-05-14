@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="relatorio_sla_atendimento"
+              pageWidth="595"
+              pageHeight="842"
+              columnWidth="555"
+              leftMargin="20"
+              rightMargin="20"
+              topMargin="20"
+              bottomMargin="20">
+    <style name="Title" fontName="SansSerif" fontSize="18" isBold="true" forecolor="#4A148C"/>
+    <style name="Header" fontName="SansSerif" fontSize="10" isBold="true" forecolor="#FFFFFF" backcolor="#7B1FA2" mode="Opaque"/>
+    <style name="Detail" fontName="SansSerif" fontSize="10" forecolor="#212121"/>
+
+    <field name="fila" class="java.lang.String"/>
+    <field name="totalAtendimentos" class="java.lang.Long"/>
+    <field name="dentroSla" class="java.lang.Long"/>
+    <field name="tempoMedioResolucaoHoras" class="java.math.BigDecimal"/>
+
+    <title>
+        <band height="64">
+            <staticText>
+                <reportElement style="Title" x="0" y="0" width="555" height="30"/>
+                <text><![CDATA[Relatório de SLA de Atendimento]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="34" width="555" height="18"/>
+                <text><![CDATA[Modelo operacional genérico, sem dados pessoais ou corporativos reais]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="22">
+            <staticText><reportElement style="Header" x="0" y="0" width="160" height="22"/><text><![CDATA[Fila]]></text></staticText>
+            <staticText><reportElement style="Header" x="160" y="0" width="130" height="22"/><text><![CDATA[Atendimentos]]></text></staticText>
+            <staticText><reportElement style="Header" x="290" y="0" width="120" height="22"/><text><![CDATA[Dentro SLA]]></text></staticText>
+            <staticText><reportElement style="Header" x="410" y="0" width="145" height="22"/><text><![CDATA[Tempo médio (h)]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="20">
+            <textField><reportElement style="Detail" x="0" y="0" width="160" height="20"/><textFieldExpression><![CDATA[$F{fila}]]></textFieldExpression></textField>
+            <textField><reportElement style="Detail" x="160" y="0" width="130" height="20"/><textFieldExpression><![CDATA[$F{totalAtendimentos}]]></textFieldExpression></textField>
+            <textField><reportElement style="Detail" x="290" y="0" width="120" height="20"/><textFieldExpression><![CDATA[$F{dentroSla}]]></textFieldExpression></textField>
+            <textField pattern="#0.00"><reportElement style="Detail" x="410" y="0" width="145" height="20"/><textFieldExpression><![CDATA[$F{tempoMedioResolucaoHoras}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+</jasperReport>

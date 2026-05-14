@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="relatorio_kpi_vendas"
+              pageWidth="842"
+              pageHeight="595"
+              orientation="Landscape"
+              columnWidth="802"
+              leftMargin="20"
+              rightMargin="20"
+              topMargin="20"
+              bottomMargin="20">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <style name="Title" fontName="SansSerif" fontSize="18" isBold="true" forecolor="#263238"/>
+    <style name="Header" fontName="SansSerif" fontSize="11" isBold="true" forecolor="#FFFFFF" backcolor="#546E7A" mode="Opaque"/>
+    <style name="Detail" fontName="SansSerif" fontSize="10" forecolor="#263238"/>
+
+    <field name="period" class="java.time.YearMonth"/>
+    <field name="revenue" class="java.math.BigDecimal"/>
+    <field name="orderCount" class="java.lang.Long"/>
+    <field name="activeCustomers" class="java.lang.Long"/>
+    <field name="averageTicket" class="java.math.BigDecimal"/>
+
+    <title>
+        <band height="70">
+            <staticText>
+                <reportElement style="Title" x="0" y="0" width="802" height="30"/>
+                <text><![CDATA[Relatório de KPIs de Vendas]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="35" width="802" height="20"/>
+                <text><![CDATA[Exemplo genérico para Business Intelligence com dados anonimizados]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="24">
+            <staticText><reportElement style="Header" x="0" y="0" width="120" height="24"/><text><![CDATA[Período]]></text></staticText>
+            <staticText><reportElement style="Header" x="120" y="0" width="170" height="24"/><text><![CDATA[Receita]]></text></staticText>
+            <staticText><reportElement style="Header" x="290" y="0" width="170" height="24"/><text><![CDATA[Pedidos]]></text></staticText>
+            <staticText><reportElement style="Header" x="460" y="0" width="170" height="24"/><text><![CDATA[Clientes ativos]]></text></staticText>
+            <staticText><reportElement style="Header" x="630" y="0" width="172" height="24"/><text><![CDATA[Ticket médio]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="22">
+            <textField><reportElement style="Detail" x="0" y="0" width="120" height="22"/><textFieldExpression><![CDATA[$F{period}.toString()]]></textFieldExpression></textField>
+            <textField pattern="¤ #,##0.00"><reportElement style="Detail" x="120" y="0" width="170" height="22"/><textFieldExpression><![CDATA[$F{revenue}]]></textFieldExpression></textField>
+            <textField><reportElement style="Detail" x="290" y="0" width="170" height="22"/><textFieldExpression><![CDATA[$F{orderCount}]]></textFieldExpression></textField>
+            <textField><reportElement style="Detail" x="460" y="0" width="170" height="22"/><textFieldExpression><![CDATA[$F{activeCustomers}]]></textFieldExpression></textField>
+            <textField pattern="¤ #,##0.00"><reportElement style="Detail" x="630" y="0" width="172" height="22"/><textFieldExpression><![CDATA[$F{averageTicket}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+</jasperReport>
