@@ -14,17 +14,17 @@
 
 O **analytic-reports-by-jooh** reúne exemplos práticos de:
 
-💻 Consultas SQL e HQL  
-📊 Estruturas analíticas para Business Intelligence  
-☕ Desenvolvimento backend com Java  
-🧠 Processamento e manipulação de dados  
-📈 Indicadores, métricas e KPIs  
-🎨 Layouts desenvolvidos no JasperReports Studio  
-📑 Relatórios analíticos e operacionais  
-⚡ Otimização de consultas e performance  
+💻 Consultas SQL e HQL
+📊 Estruturas analíticas para Business Intelligence
+☕ Desenvolvimento backend com Java 8
+🧠 Processamento e manipulação de dados
+📈 Indicadores, métricas e KPIs
+🎨 Layouts desenvolvidos no JasperReports Studio
+📑 Relatórios analíticos e operacionais
+⚡ Otimização de consultas e performance
 🔍 Exemplos de lógica aplicada em BI e geração de relatórios
 
-O objetivo do projeto é compartilhar conhecimento, estudos, ideias e formas de estruturar soluções analíticas de maneira organizada e escalável.
+O objetivo do projeto é funcionar como um mini framework profissional de BI / Analytics em Java 8 + HQL + SQL + JasperReports, com exemplos reutilizáveis para portfólio, documentação e estudos técnicos.
 
 > Observação: os exemplos deste repositório foram generalizados e anonimizados. Eles não utilizam dados reais, nomes de empresas, identificadores internos ou informações pessoais. Também não há exemplos em Python, conforme a proposta do projeto.
 
@@ -74,9 +74,9 @@ O objetivo do projeto é compartilhar conhecimento, estudos, ideias e formas de 
 
 ## 1. Vendas e receita
 
-- KPI mensal de receita, pedidos, clientes ativos e ticket médio.
-- Comparativo com mês anterior.
-- Layout JasperReports para relatório executivo.
+- KPI mensal de receita, receita líquida, margem, pedidos, clientes ativos e ticket médio.
+- Comparativo com mês anterior e classificação analítica alto/médio/baixo.
+- Layout JasperReports para dashboard executivo.
 
 Arquivos principais:
 
@@ -88,8 +88,8 @@ Arquivos principais:
 ## 2. Atendimento e SLA
 
 - Funil operacional por etapa.
-- Taxa de resolução e cumprimento de SLA.
-- Relatório JasperReports para filas de atendimento.
+- Taxa de resolução, cumprimento de SLA, tempo médio e criticidade.
+- Relatório JasperReports para dashboard operacional por fila.
 
 Arquivos principais:
 
@@ -101,14 +101,25 @@ Arquivos principais:
 ## 3. Retenção e recorrência
 
 - Coortes de primeira compra.
-- Clientes recorrentes por segmento.
-- Ideias de visualizações para retenção mensal.
+- Clientes recorrentes por segmento, taxa de conclusão e ticket médio.
+- Ideias de visualizações para retenção mensal e receita retida.
 
 Arquivos principais:
 
 - `sql/coorte_retencao_clientes.sql`
 - `hql/retencao_clientes.hql`
 - `dashboard-examples/retencao-clientes.md`
+
+
+---
+
+# 🧱 Arquitetura BI proposta
+
+1. **Queries (HQL/SQL)**: agregações, percentuais, filtros dinâmicos e aliases analíticos.
+2. **DTOs de BI**: `KpiResult` consolida período, dimensão, valores financeiros e métricas derivadas.
+3. **Utility layer**: `KpiCalculator` calcula margem, ticket médio, variação percentual, classificações e agregações.
+4. **JasperReports**: templates JRXML com título, cards de KPI, tabela e gráficos.
+5. **Factory layer**: `ReportDataSourceFactory` padroniza `JRBeanCollectionDataSource` para DTOs e mapas.
 
 ---
 

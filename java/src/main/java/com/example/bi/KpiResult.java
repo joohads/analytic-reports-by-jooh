@@ -6,25 +6,23 @@ import java.time.YearMonth;
 import java.util.Objects;
 
 /**
- * Resultado mensal de indicadores BI.
+ * DTO imutável para resultados de indicadores analíticos.
  *
- * Versão enriquecida para uso em:
- *  - dashboards
- *  - relatórios JasperReports
- *  - análises comparativas
- *  - KPIs executivos
- *
- * Mantém estrutura simples, mas com métricas derivadas prontas.
+ * O modelo representa uma projeção genérica que pode ser alimentada por HQL,
+ * SQL analítico ou agregações em memória antes de ser enviada ao JasperReports.
+ * Os nomes seguem uma linguagem de BI: período, dimensão, receita, custo,
+ * desconto, volume e métricas derivadas.
  */
 public final class KpiResult {
 
     private final YearMonth period;
+    private final String dimension;
     private final BigDecimal revenue;
-    private final long orderCount;
-    private final long activeCustomers;
-
     private final BigDecimal cost;
     private final BigDecimal discount;
+    private final long orderCount;
+    private final long activeCustomers;
+    private final long quantity;
 
     public KpiResult(YearMonth period,
                      BigDecimal revenue,
@@ -32,31 +30,49 @@ public final class KpiResult {
                      long activeCustomers,
                      BigDecimal cost,
                      BigDecimal discount) {
+        this(period, "GERAL", revenue, cost, discount, orderCount, activeCustomers, 0L);
+    }
 
+    public KpiResult(YearMonth period,
+                     String dimension,
+                     BigDecimal revenue,
+                     BigDecimal cost,
+                     BigDecimal discount,
+                     long orderCount,
+                     long activeCustomers,
+                     long quantity) {
         this.period = Objects.requireNonNull(period, "period");
-        this.revenue = Objects.requireNonNull(revenue, "revenue");
-
+        this.dimension = normalizeDimension(dimension);
+        this.revenue = money(revenue);
+        this.cost = money(cost);
+        this.discount = money(discount);
         this.orderCount = orderCount;
         this.activeCustomers = activeCustomers;
-
-        this.cost = cost != null ? cost : BigDecimal.ZERO;
-        this.discount = discount != null ? discount : BigDecimal.ZERO;
+        this.quantity = quantity;
     }
 
     public YearMonth getPeriod() {
         return period;
     }
 
+    public String getPeriodLabel() {
+        return period.toString();
+    }
+
+    public int getYear() {
+        return period.getYear();
+    }
+
+    public int getMonth() {
+        return period.getMonthValue();
+    }
+
+    public String getDimension() {
+        return dimension;
+    }
+
     public BigDecimal getRevenue() {
         return revenue;
-    }
-
-    public long getOrderCount() {
-        return orderCount;
-    }
-
-    public long getActiveCustomers() {
-        return activeCustomers;
     }
 
     public BigDecimal getCost() {
@@ -67,107 +83,73 @@ public final class KpiResult {
         return discount;
     }
 
-    // =========================
-    // KPI DERIVADOS (BI LAYER)
-    // =========================
+    public long getOrderCount() {
+        return orderCount;
+    }
 
-    public BigDecimal getAverageTicket() {
+    public long getActiveCustomers() {
+        return activeCustomers;
+    }
 
-        if (orderCount == 0) {
-            return BigDecimal.ZERO;
-        }
-
-        return revenue.divide(
-                BigDecimal.valueOf(orderCount),
-                2,
-                RoundingMode.HALF_UP
-        );
+    public long getQuantity() {
+        return quantity;
     }
 
     public BigDecimal getNetRevenue() {
-
-        return revenue
-                .subtract(discount)
-                .setScale(2, RoundingMode.HALF_UP);
+        return revenue.subtract(discount).setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getProfit() {
-
-        return getNetRevenue()
-                .subtract(cost)
-                .setScale(2, RoundingMode.HALF_UP);
+        return getNetRevenue().subtract(cost).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal getMarginPercentage() {
-
-        BigDecimal net = getNetRevenue();
-
-        if (net.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO;
-        }
-
-        return getProfit()
-                .divide(net, 4, RoundingMode.HALF_UP)
-                .multiply(BigDecimal.valueOf(100))
-                .setScale(2, RoundingMode.HALF_UP);
+    public BigDecimal getAverageTicket() {
+        return KpiCalculator.divide(revenue, BigDecimal.valueOf(orderCount));
     }
 
     public BigDecimal getRevenuePerCustomer() {
-
-        if (activeCustomers == 0) {
-            return BigDecimal.ZERO;
-        }
-
-        return revenue.divide(
-                BigDecimal.valueOf(activeCustomers),
-                2,
-                RoundingMode.HALF_UP
-        );
+        return KpiCalculator.divide(revenue, BigDecimal.valueOf(activeCustomers));
     }
 
-    // =========================
-    // CLASSIFICAÇÃO BI
-    // =========================
+    public BigDecimal getMarginPercentage() {
+        return KpiCalculator.percentage(getProfit(), getNetRevenue());
+    }
+
+    public BigDecimal getDiscountPercentage() {
+        return KpiCalculator.percentage(discount, revenue);
+    }
 
     public String getPerformanceClass() {
+        return KpiCalculator.classifyByValue(revenue);
+    }
 
-        BigDecimal r = getRevenue();
-
-        if (r.compareTo(BigDecimal.valueOf(100000)) >= 0) {
-            return "ALTO DESEMPENHO";
-        }
-
-        if (r.compareTo(BigDecimal.valueOf(50000)) >= 0) {
-            return "MEDIO DESEMPENHO";
-        }
-
-        return "BAIXO DESEMPENHO";
+    public String getMarginClass() {
+        return KpiCalculator.classifyByPercentage(getMarginPercentage());
     }
 
     public String getTicketClass() {
-
-        BigDecimal ticket = getAverageTicket();
-
-        if (ticket.compareTo(BigDecimal.valueOf(1000)) >= 0) {
-            return "TICKET ALTO";
-        }
-
-        if (ticket.compareTo(BigDecimal.valueOf(300)) >= 0) {
-            return "TICKET MEDIO";
-        }
-
-        return "TICKET BAIXO";
+        return KpiCalculator.classifyByValue(getAverageTicket());
     }
 
-    // =========================
-    // INDICADOR RESUMIDO
-    // =========================
-
     public String getKpiSummaryLabel() {
+        return getPeriodLabel()
+                + " | Dimensão: " + dimension
+                + " | Receita: " + revenue
+                + " | Pedidos: " + orderCount
+                + " | Clientes: " + activeCustomers;
+    }
 
-        return period + " | "
-                + "Receita: " + revenue + " | "
-                + "Pedidos: " + orderCount + " | "
-                + "Clientes: " + activeCustomers;
+    private static BigDecimal money(BigDecimal value) {
+        if (value == null) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        return value.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private static String normalizeDimension(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "GERAL";
+        }
+        return value.trim().toUpperCase();
     }
 }
