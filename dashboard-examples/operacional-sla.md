@@ -1,21 +1,22 @@
 # Dashboard operacional de SLA
 
 ## Objetivo
-Monitorar a eficiência operacional de filas de atendimento sem expor informações pessoais ou detalhes internos de processos reais.
+Monitorar eficiência operacional de filas de atendimento sem expor informações pessoais ou detalhes internos de processos reais.
 
 ## KPIs principais
 
 | Indicador | Descrição |
 | --- | --- |
 | Atendimentos abertos | Total de registros iniciados no período |
-| Taxa de resolução | Percentual de registros concluídos |
-| SLA cumprido | Percentual de registros resolvidos dentro do prazo |
+| Atendimentos dentro do SLA | Registros resolvidos até o limite acordado |
+| Percentual de SLA | Atendimentos dentro do SLA divididos pelo total resolvido |
 | Tempo médio de resolução | Média entre abertura e resolução |
+| Classificação SLA | Alto, médio ou baixo conforme limite parametrizado |
 
 ## Visualizações sugeridas
 
+- Cards para volume, dentro do SLA, fora do SLA e SLA geral.
 - Funil de etapas: aberto, em análise e resolvido.
-- Heatmap por dia da semana e hora de abertura.
 - Ranking de filas por cumprimento de SLA.
 - Série temporal do tempo médio de resolução.
 

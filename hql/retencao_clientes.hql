@@ -1,133 +1,48 @@
--- Relatório analítico de clientes recorrentes por período em HQL.
--- Exemplo genérico para portfólio / estudos.
--- Objetivo:
---   • Identificar clientes recorrentes
---   • Calcular indicadores financeiros
---   • Classificar perfil de compra
---   • Avaliar frequência e ticket médio
---   • Aplicar regras de negócio mais complexas
+-- Camada 1 (HQL): recorrência de clientes por segmento e período.
+-- Entidades fictícias: Cliente, Venda, ItemVenda e Produto.
 
 select
-    c.id as idCliente,
-    c.nomeFantasia as cliente,
-    c.segmento as segmento,
-    c.cidade as cidade,
-    c.estado as estado,
-
+    year(v.dataPedido) as ano,
+    month(v.dataPedido) as mes,
+    c.segmento as dimensao,
+    count(distinct c.id) as clientesAtivos,
     count(distinct v.id) as totalPedidos,
-
-    sum(
-        coalesce(iv.valorTotal, 0)
-    ) as faturamentoTotal,
-
-    avg(
-        coalesce(iv.valorTotal, 0)
-    ) as ticketMedio,
-
-    min(v.dataPedido) as primeiroPedidoPeriodo,
-    max(v.dataPedido) as ultimoPedidoPeriodo,
-
     count(distinct p.id) as produtosDistintos,
-
-    sum(
-        case
-            when v.status = :statusConcluido then 1
-            else 0
-        end
-    ) as pedidosConcluidos,
-
-    sum(
-        case
-            when v.status = :statusCancelado then 1
-            else 0
-        end
-    ) as pedidosCancelados,
-
-    sum(
-        case
-            when iv.quantidade >= :quantidadeAlta
-            then iv.quantidade
-            else 0
-        end
-    ) as volumeItensAltaQuantidade,
-
+    min(v.dataPedido) as primeiraCompraPeriodo,
+    max(v.dataPedido) as ultimaCompraPeriodo,
+    sum(coalesce(iv.valorTotal, 0)) as receitaTotal,
+    avg(coalesce(iv.valorTotal, 0)) as ticketMedio,
+    sum(case when v.status = :statusConcluido then 1 else 0 end) as pedidosConcluidos,
+    sum(case when v.status = :statusCancelado then 1 else 0 end) as pedidosCancelados,
+    round(sum(case when v.status = :statusConcluido then 1 else 0 end) * 100.0 / nullif(count(distinct v.id), 0), 2) as taxaConclusao,
     case
-        when avg(iv.valorTotal) >= :valorPremium
-            then 'PREMIUM'
-
-        when avg(iv.valorTotal) between :valorIntermediarioInicial and :valorIntermediarioFinal
-            then 'INTERMEDIARIO'
-
-        else 'PADRAO'
-    end as classificacaoCliente,
-
+        when count(distinct v.id) >= :limiteRecorrenciaAlta then 'ALTO'
+        when count(distinct v.id) >= :limiteRecorrenciaMedia then 'MEDIO'
+        else 'BAIXO'
+    end as classificacaoRecorrencia,
     case
-        when count(distinct v.id) >= :limiteRecorrenciaAlta
-            then 'ALTA RECORRENCIA'
-
-        when count(distinct v.id) between :limiteRecorrenciaMediaInicial and :limiteRecorrenciaMediaFinal
-            then 'MEDIA RECORRENCIA'
-
-        else 'BAIXA RECORRENCIA'
-    end as perfilRecorrencia
-
+        when avg(coalesce(iv.valorTotal, 0)) >= :limiteTicketAlto then 'ALTO'
+        when avg(coalesce(iv.valorTotal, 0)) >= :limiteTicketMedio then 'MEDIO'
+        else 'BAIXO'
+    end as classificacaoTicket
 from Cliente c
-
 join c.vendas v
-
 left join v.itensVenda iv
 left join iv.produto p
-
 where v.dataPedido between :dataInicial and :dataFinal
-
-  and v.status in (
-      :statusConcluido,
-      :statusFaturado,
-      :statusParcial
-  )
-
-  and (
-      :considerarSomenteAtivos = false
-      or c.ativo = true
-  )
-
-  and (
-      :filtrarSegmento = false
-      or c.segmento in (:segmentos)
-  )
-
-  and (
-      :filtrarEstados = false
-      or c.estado in (:estados)
-  )
-
-  and (
-      :filtrarValorMinimo = false
-      or iv.valorTotal >= :valorMinimoItem
-  )
-
+  and v.status in (:statusValidos)
+  and (:considerarSomenteAtivos = false or c.ativo = true)
+  and (:filtrarSegmentos = false or c.segmento in (:segmentos))
+  and (:filtrarEstados = false or c.estado in (:estados))
 group by
-    c.id,
-    c.nomeFantasia,
-    c.segmento,
-    c.cidade,
-    c.estado
-
+    year(v.dataPedido),
+    month(v.dataPedido),
+    c.segmento
 having
     count(distinct v.id) >= :minimoPedidos
-
-    and sum(
-        case
-            when v.status = :statusConcluido then 1
-            else 0
-        end
-    ) >= :minimoPedidosConcluidos
-
-    and avg(
-        coalesce(iv.valorTotal, 0)
-    ) >= :ticketMedioMinimo
-
+    and avg(coalesce(iv.valorTotal, 0)) >= :ticketMedioMinimo
 order by
-    faturamentoTotal desc,
-    totalPedidos desc,
-    ticketMedio desc
+    ano,
+    mes,
+    receitaTotal desc,
+    totalPedidos desc

@@ -1,249 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
-              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
-              name="bi_dashboard_template"
-              pageWidth="1200"
-              pageHeight="800"
-              columnWidth="1160"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="relatorio_kpi_vendas"
+              pageWidth="842"
+              pageHeight="595"
+              orientation="Landscape"
+              columnWidth="802"
               leftMargin="20"
               rightMargin="20"
               topMargin="20"
-              bottomMargin="20"
-              uuid="11111111-2222-3333-4444-555555555555">
+              bottomMargin="20">
 
-    <!-- ===================== -->
-    <!-- PARÂMETROS GLOBAIS    -->
-    <!-- ===================== -->
+    <style name="Title" fontName="SansSerif" fontSize="20" isBold="true" forecolor="#263238"/>
+    <style name="Subtitle" fontName="SansSerif" fontSize="10" forecolor="#546E7A"/>
+    <style name="Header" fontName="SansSerif" fontSize="9" isBold="true" forecolor="#FFFFFF" backcolor="#1565C0" mode="Opaque"/>
+    <style name="Detail" fontName="SansSerif" fontSize="9" forecolor="#212121"/>
+    <style name="KpiCard" fontName="SansSerif" fontSize="11" isBold="true" forecolor="#0D47A1" backcolor="#E3F2FD" mode="Opaque"/>
+
+    <subDataset name="ds_kpi_vendas_resumo">
+        <field name="dimension" class="java.lang.String"/>
+        <field name="revenue" class="java.math.BigDecimal"/>
+        <field name="averageTicket" class="java.math.BigDecimal"/>
+    </subDataset>
 
     <parameter name="DATA_INICIAL" class="java.util.Date"/>
     <parameter name="DATA_FINAL" class="java.util.Date"/>
-    <parameter name="FILTRO_GLOBAL" class="java.lang.String"/>
+    <parameter name="TITULO_RELATORIO" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["Dashboard Executivo de Vendas"]]></defaultValueExpression>
+    </parameter>
 
-    <!-- ===================== -->
-    <!-- DATASET PRINCIPAL     -->
-    <!-- ===================== -->
+    <field name="periodLabel" class="java.lang.String"/>
+    <field name="dimension" class="java.lang.String"/>
+    <field name="revenue" class="java.math.BigDecimal"/>
+    <field name="netRevenue" class="java.math.BigDecimal"/>
+    <field name="profit" class="java.math.BigDecimal"/>
+    <field name="orderCount" class="java.lang.Long"/>
+    <field name="activeCustomers" class="java.lang.Long"/>
+    <field name="averageTicket" class="java.math.BigDecimal"/>
+    <field name="marginPercentage" class="java.math.BigDecimal"/>
+    <field name="performanceClass" class="java.lang.String"/>
 
-    <queryString>
-        <![CDATA[
-
-        select
-            d.dim1 as dimensao_1,
-            d.dim2 as dimensao_2,
-            d.ano as ano,
-            d.mes as mes,
-
-            sum(d.valor) as valor_total,
-            count(distinct d.id) as quantidade
-
-        from fato_dados d
-
-        where d.data between $P{DATA_INICIAL} and $P{DATA_FINAL}
-
-        group by
-            d.dim1,
-            d.dim2,
-            d.ano,
-            d.mes
-
-        ]]>
-    </queryString>
-
-    <!-- ===================== -->
-    <!-- CAMPOS BASE           -->
-    <!-- ===================== -->
-
-    <field name="dimensao_1" class="java.lang.String"/>
-    <field name="dimensao_2" class="java.lang.String"/>
-    <field name="ano" class="java.lang.Integer"/>
-    <field name="mes" class="java.lang.Integer"/>
-    <field name="valor_total" class="java.lang.Double"/>
-    <field name="quantidade" class="java.lang.Long"/>
-
-    <!-- ===================== -->
-    <!-- VARIÁVEIS KPIs        -->
-    <!-- ===================== -->
-
-    <variable name="TOTAL_VALOR" class="java.lang.Double" calculation="Sum">
-        <variableExpression><![CDATA[$F{valor_total}]]></variableExpression>
+    <variable name="TOTAL_RECEITA" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{revenue}]]></variableExpression>
     </variable>
-
-    <variable name="TOTAL_QTD" class="java.lang.Long" calculation="Sum">
-        <variableExpression><![CDATA[$F{quantidade}]]></variableExpression>
+    <variable name="TOTAL_RECEITA_LIQUIDA" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{netRevenue}]]></variableExpression>
     </variable>
-
-    <!-- ===================== -->
-    <!-- SUBDATASET 1 - TOP N  -->
-    <!-- ===================== -->
-
-    <subDataset name="ds_top_dimensao">
-
-        <queryString>
-            <![CDATA[
-
-            select
-                d.dim1 as nome,
-                sum(d.valor) as valor
-
-            from fato_dados d
-
-            group by d.dim1
-
-            order by valor desc
-
-            ]]>
-        </queryString>
-
-        <field name="nome" class="java.lang.String"/>
-        <field name="valor" class="java.lang.Double"/>
-
-    </subDataset>
-
-    <!-- ===================== -->
-    <!-- SUBDATASET 2 - SERIES -->
-    <!-- ===================== -->
-
-    <subDataset name="ds_series_tempo">
-
-        <queryString>
-            <![CDATA[
-
-            select
-                d.ano as ano,
-                d.mes as mes,
-                sum(d.valor) as valor
-
-            from fato_dados d
-
-            group by d.ano, d.mes
-
-            order by d.ano, d.mes
-
-            ]]>
-        </queryString>
-
-        <field name="ano" class="java.lang.Integer"/>
-        <field name="mes" class="java.lang.Integer"/>
-        <field name="valor" class="java.lang.Double"/>
-
-    </subDataset>
-
-    <!-- ===================== -->
-    <!-- TITLE / HEADER        -->
-    <!-- ===================== -->
+    <variable name="TOTAL_LUCRO" class="java.math.BigDecimal" calculation="Sum">
+        <variableExpression><![CDATA[$F{profit}]]></variableExpression>
+    </variable>
+    <variable name="TOTAL_PEDIDOS" class="java.lang.Long" calculation="Sum">
+        <variableExpression><![CDATA[$F{orderCount}]]></variableExpression>
+    </variable>
+    <variable name="TOTAL_CLIENTES" class="java.lang.Long" calculation="Sum">
+        <variableExpression><![CDATA[$F{activeCustomers}]]></variableExpression>
+    </variable>
+    <variable name="TICKET_MEDIO_GERAL" class="java.math.BigDecimal">
+        <variableExpression><![CDATA[
+            ($V{TOTAL_PEDIDOS} == null || $V{TOTAL_PEDIDOS}.longValue() == 0L)
+            ? java.math.BigDecimal.ZERO
+            : $V{TOTAL_RECEITA}.divide(new java.math.BigDecimal($V{TOTAL_PEDIDOS}), 2, java.math.RoundingMode.HALF_UP)
+        ]]></variableExpression>
+    </variable>
 
     <title>
-        <band height="120">
-
+        <band height="78">
+            <textField>
+                <reportElement style="Title" x="0" y="0" width="500" height="28"/>
+                <textFieldExpression><![CDATA[$P{TITULO_RELATORIO}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Subtitle" x="0" y="32" width="802" height="16"/>
+                <textFieldExpression><![CDATA["Período: " + $P{DATA_INICIAL} + " até " + $P{DATA_FINAL}]]></textFieldExpression>
+            </textField>
             <staticText>
-                <reportElement x="0" y="0" width="600" height="30"/>
-                <textElement>
-                    <font size="20" isBold="true"/>
-                </textElement>
-                <text><![CDATA[DASHBOARD ANALÍTICO BI]]></text>
+                <reportElement style="Subtitle" x="0" y="52" width="802" height="16"/>
+                <text><![CDATA[Template genérico para KPIs, margem, ticket médio e classificação de desempenho.]]></text>
             </staticText>
-
-            <textField>
-                <reportElement x="0" y="35" width="600" height="20"/>
-                <textFieldExpression><![CDATA[
-                    "Período: " + $P{DATA_INICIAL} + " até " + $P{DATA_FINAL}
-                ]]></textFieldExpression>
-            </textField>
-
-            <textField>
-                <reportElement x="0" y="55" width="600" height="20"/>
-                <textFieldExpression><![CDATA[
-                    "Total Geral: " + $V{TOTAL_VALOR}
-                ]]></textFieldExpression>
-            </textField>
-
         </band>
     </title>
 
-    <!-- ===================== -->
-    <!-- SUMMARY KPIs CARDS    -->
-    <!-- ===================== -->
+    <columnHeader>
+        <band height="24">
+            <staticText><reportElement style="Header" x="0" y="0" width="80" height="22"/><text><![CDATA[Período]]></text></staticText>
+            <staticText><reportElement style="Header" x="80" y="0" width="130" height="22"/><text><![CDATA[Dimensão]]></text></staticText>
+            <staticText><reportElement style="Header" x="210" y="0" width="95" height="22"/><text><![CDATA[Receita]]></text></staticText>
+            <staticText><reportElement style="Header" x="305" y="0" width="95" height="22"/><text><![CDATA[Receita líquida]]></text></staticText>
+            <staticText><reportElement style="Header" x="400" y="0" width="80" height="22"/><text><![CDATA[Lucro]]></text></staticText>
+            <staticText><reportElement style="Header" x="480" y="0" width="75" height="22"/><text><![CDATA[Pedidos]]></text></staticText>
+            <staticText><reportElement style="Header" x="555" y="0" width="75" height="22"/><text><![CDATA[Clientes]]></text></staticText>
+            <staticText><reportElement style="Header" x="630" y="0" width="85" height="22"/><text><![CDATA[Ticket]]></text></staticText>
+            <staticText><reportElement style="Header" x="715" y="0" width="87" height="22"/><text><![CDATA[Classe]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="22">
+            <textField><reportElement style="Detail" x="0" y="0" width="80" height="20"/><textFieldExpression><![CDATA[$F{periodLabel}]]></textFieldExpression></textField>
+            <textField><reportElement style="Detail" x="80" y="0" width="130" height="20"/><textFieldExpression><![CDATA[$F{dimension}]]></textFieldExpression></textField>
+            <textField pattern="#,##0.00"><reportElement style="Detail" x="210" y="0" width="95" height="20"/><textFieldExpression><![CDATA[$F{revenue}]]></textFieldExpression></textField>
+            <textField pattern="#,##0.00"><reportElement style="Detail" x="305" y="0" width="95" height="20"/><textFieldExpression><![CDATA[$F{netRevenue}]]></textFieldExpression></textField>
+            <textField pattern="#,##0.00"><reportElement style="Detail" x="400" y="0" width="80" height="20"/><textFieldExpression><![CDATA[$F{profit}]]></textFieldExpression></textField>
+            <textField><reportElement style="Detail" x="480" y="0" width="75" height="20"/><textFieldExpression><![CDATA[$F{orderCount}]]></textFieldExpression></textField>
+            <textField><reportElement style="Detail" x="555" y="0" width="75" height="20"/><textFieldExpression><![CDATA[$F{activeCustomers}]]></textFieldExpression></textField>
+            <textField pattern="#,##0.00"><reportElement style="Detail" x="630" y="0" width="85" height="20"/><textFieldExpression><![CDATA[$F{averageTicket}]]></textFieldExpression></textField>
+            <textField><reportElement style="Detail" x="715" y="0" width="87" height="20"/><textFieldExpression><![CDATA[$F{performanceClass}]]></textFieldExpression></textField>
+        </band>
+    </detail>
 
     <summary>
-        <band height="150">
-
-            <staticText>
-                <reportElement x="0" y="0" width="300" height="20"/>
-                <text><![CDATA[KPIs PRINCIPAIS]]></text>
-            </staticText>
-
-            <textField>
-                <reportElement x="0" y="30" width="300" height="20"/>
-                <textFieldExpression><![CDATA["Valor Total: " + $V{TOTAL_VALOR}]]></textFieldExpression>
-            </textField>
-
-            <textField>
-                <reportElement x="0" y="50" width="300" height="20"/>
-                <textFieldExpression><![CDATA["Quantidade: " + $V{TOTAL_QTD}]]></textFieldExpression>
-            </textField>
-
-            <!-- ===================== -->
-            <!-- GRÁFICO 1 - PIE       -->
-            <!-- ===================== -->
-
-            <pieChart>
-                <chart>
-                    <reportElement x="350" y="0" width="300" height="140"/>
-                    <chartTitle>
-                        <titleExpression><![CDATA["Distribuição por Dimensão"]]></titleExpression>
-                    </chartTitle>
-                </chart>
-
-                <pieDataset>
-
-                    <datasetRun subDataset="ds_top_dimensao"/>
-
-                    <keyExpression><![CDATA[$F{nome}]]></keyExpression>
-                    <valueExpression><![CDATA[$F{valor}]]></valueExpression>
-
-                </pieDataset>
-
-                <piePlot/>
-
-            </pieChart>
-
+        <band height="140">
+            <textField><reportElement style="KpiCard" x="0" y="0" width="190" height="28"/><textFieldExpression><![CDATA["Receita: " + $V{TOTAL_RECEITA}]]></textFieldExpression></textField>
+            <textField><reportElement style="KpiCard" x="200" y="0" width="190" height="28"/><textFieldExpression><![CDATA["Receita líquida: " + $V{TOTAL_RECEITA_LIQUIDA}]]></textFieldExpression></textField>
+            <textField><reportElement style="KpiCard" x="400" y="0" width="190" height="28"/><textFieldExpression><![CDATA["Lucro: " + $V{TOTAL_LUCRO}]]></textFieldExpression></textField>
+            <textField><reportElement style="KpiCard" x="600" y="0" width="202" height="28"/><textFieldExpression><![CDATA["Ticket médio: " + $V{TICKET_MEDIO_GERAL}]]></textFieldExpression></textField>
+            <barChart>
+                <chart><reportElement x="0" y="42" width="390" height="90"/><chartTitle><titleExpression><![CDATA["Receita por dimensão"]]></titleExpression></chartTitle></chart>
+                <categoryDataset>
+                    <categorySeries>
+                        <seriesExpression><![CDATA["Receita"]]></seriesExpression>
+                        <categoryExpression><![CDATA[$F{dimension}]]></categoryExpression>
+                        <valueExpression><![CDATA[$F{revenue}]]></valueExpression>
+                    </categorySeries>
+                </categoryDataset>
+                <barPlot/>
+            </barChart>
+            <lineChart>
+                <chart><reportElement x="410" y="42" width="392" height="90"/><chartTitle><titleExpression><![CDATA["Ticket médio por período"]]></titleExpression></chartTitle></chart>
+                <categoryDataset>
+                    <categorySeries>
+                        <seriesExpression><![CDATA["Ticket médio"]]></seriesExpression>
+                        <categoryExpression><![CDATA[$F{periodLabel}]]></categoryExpression>
+                        <valueExpression><![CDATA[$F{averageTicket}]]></valueExpression>
+                    </categorySeries>
+                </categoryDataset>
+                <linePlot/>
+            </lineChart>
         </band>
     </summary>
-
-    <!-- ===================== -->
-    <!-- GRÁFICO 2 - LINE      -->
-    <!-- ===================== -->
-
-    <summary>
-        <band height="250">
-
-            <timeSeriesChart>
-                <chart>
-                    <reportElement x="0" y="0" width="700" height="220"/>
-                    <chartTitle>
-                        <titleExpression><![CDATA["Evolução Temporal"]]></titleExpression>
-                    </chartTitle>
-                </chart>
-
-                <timeSeriesDataset>
-
-                    <datasetRun subDataset="ds_series_tempo"/>
-
-                    <timePeriodExpression><![CDATA[
-                        new java.util.Date($F{ano}, $F{mes}, 1)
-                    ]]></timePeriodExpression>
-
-                    <valueExpression><![CDATA[$F{valor}]]></valueExpression>
-
-                </timeSeriesDataset>
-
-                <timeSeriesPlot/>
-
-            </timeSeriesChart>
-
-        </band>
-    </summary>
-
 </jasperReport>

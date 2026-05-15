@@ -1,24 +1,28 @@
 # Dashboard executivo de vendas
 
 ## Objetivo
-Acompanhar desempenho comercial mensal com foco em receita, volume de pedidos, ticket médio e base ativa.
+Acompanhar desempenho comercial mensal com foco em receita, receita líquida, lucro estimado, margem, volume de pedidos, ticket médio e base ativa.
 
 ## KPIs principais
 
 | Indicador | Descrição | Exemplo de origem |
 | --- | --- | --- |
-| Receita total | Soma de pedidos concluídos | `sql/kpi_vendas_mensais.sql` |
+| Receita bruta | Soma dos pedidos concluídos antes de desconto | `sql/kpi_vendas_mensais.sql` |
+| Receita líquida | Receita bruta menos descontos | `KpiResult#getNetRevenue()` |
+| Margem percentual | Lucro estimado dividido pela receita líquida | `KpiResult#getMarginPercentage()` |
 | Ticket médio | Receita dividida pelo total de pedidos | `KpiResult#getAverageTicket()` |
-| Clientes ativos | Clientes distintos com compra no período | `fato_vendas.id_cliente` |
-| Variação mensal | Comparação percentual contra mês anterior | CTE `comparativo` |
+| Classificação | Faixa alto/médio/baixo para leitura executiva | `KpiCalculator#classifyByValue()` |
 
 ## Visualizações sugeridas
 
-1. Cards para receita, pedidos, clientes ativos e ticket médio.
-2. Linha temporal com evolução de receita.
+1. Cards para receita, receita líquida, lucro e ticket médio.
+2. Linha temporal com evolução de receita e variação percentual.
 3. Barras por categoria, canal ou região fictícia.
-4. Tabela com ranking de produtos ou segmentos genéricos.
+4. Tabela de detalhe por período e dimensão analítica.
 
-## Observações de privacidade
+## Fontes de exemplo
 
-Não exibir CPF, e-mail, telefone, contrato, endereço ou qualquer identificador pessoal. Em análises por cliente, usar chaves técnicas anonimizadas ou agregações por segmento.
+- SQL: `sql/kpi_vendas_mensais.sql`
+- HQL: `hql/vendas_por_categoria.hql`
+- Java: `java/src/main/java/com/example/bi/KpiResult.java`
+- Jasper: `jasper/relatorio_kpi_vendas.jrxml`
