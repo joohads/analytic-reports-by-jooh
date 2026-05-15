@@ -26,7 +26,7 @@ O **analytic-reports-by-jooh** reúne exemplos práticos de:
 
 O objetivo do projeto é funcionar como um mini framework profissional de BI / Analytics em Java 8 + HQL + SQL + JasperReports, com exemplos reutilizáveis para portfólio, documentação e estudos técnicos.
 
-> Observação: os exemplos deste repositório foram generalizados e anonimizados. Eles não utilizam dados reais, nomes de empresas, identificadores internos ou informações pessoais. Também não há exemplos em Python, conforme a proposta do projeto.
+> Observação: os exemplos deste repositório foram generalizados e anonimizados. Eles não utilizam dados reais, nomes de empresas, identificadores internos ou informações pessoais.
 
 ---
 
