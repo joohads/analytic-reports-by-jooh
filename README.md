@@ -70,49 +70,6 @@ O objetivo do projeto é funcionar como um mini framework profissional de BI / A
 
 ---
 
-# 🧩 Temas de BI incluídos
-
-## 1. Vendas e receita
-
-- KPI mensal de receita, receita líquida, margem, pedidos, clientes ativos e ticket médio.
-- Comparativo com mês anterior e classificação analítica alto/médio/baixo.
-- Layout JasperReports para dashboard executivo.
-
-Arquivos principais:
-
-- `sql/kpi_vendas_mensais.sql`
-- `hql/vendas_por_categoria.hql`
-- `dashboard-examples/vendas-executivo.md`
-- `jasper/relatorio_kpi_vendas.jrxml`
-
-## 2. Atendimento e SLA
-
-- Funil operacional por etapa.
-- Taxa de resolução, cumprimento de SLA, tempo médio e criticidade.
-- Relatório JasperReports para dashboard operacional por fila.
-
-Arquivos principais:
-
-- `sql/analise_funil_atendimento.sql`
-- `hql/sla_atendimento_por_fila.hql`
-- `dashboard-examples/operacional-sla.md`
-- `jasper/relatorio_sla_atendimento.jrxml`
-
-## 3. Retenção e recorrência
-
-- Coortes de primeira compra.
-- Clientes recorrentes por segmento, taxa de conclusão e ticket médio.
-- Ideias de visualizações para retenção mensal e receita retida.
-
-Arquivos principais:
-
-- `sql/coorte_retencao_clientes.sql`
-- `hql/retencao_clientes.hql`
-- `dashboard-examples/retencao-clientes.md`
-
-
----
-
 # 🧱 Arquitetura BI proposta
 
 1. **Queries (HQL/SQL)**: agregações, percentuais, filtros dinâmicos e aliases analíticos.
@@ -132,20 +89,6 @@ Os exemplos foram criados com foco em reutilização técnica e proteção de in
 - Não há CPF, e-mail, telefone, endereço, contrato ou qualquer identificador pessoal.
 - Regras e métricas foram descritas de forma genérica para evitar exposição de contexto corporativo.
 
-Consulte `docs/privacidade-e-anonimizacao.md` antes de adicionar novos exemplos.
+Consulte `docs/privacidade-e-anonimizacao.md`
 
 ---
-
-# 🚀 Como usar
-
-1. Escolha um tema em `dashboard-examples/`.
-2. Consulte o SQL ou HQL correspondente.
-3. Reaproveite as classes Java em `java/src/main/java/com/example/bi/` para cálculos e integração com JasperReports.
-4. Abra os arquivos `.jrxml` no JasperReports Studio para adaptar o layout visual.
-5. Ajuste nomes de tabelas, entidades e campos para o seu ambiente, mantendo a anonimização quando for publicar exemplos.
-
-Para validar os exemplos Java:
-
-```bash
-mvn -f java/pom.xml test
-```
