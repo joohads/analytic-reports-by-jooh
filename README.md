@@ -32,10 +32,10 @@ O objetivo do projeto é funcionar como um mini framework profissional de BI / A
 
 ## 🏅 Sobre Mim
 
-Olá! Meu nome é João, profissional de Dados e Business Intelligence, com experiência prática em soluções analíticas, manipulação de dados e implementação de painéis e relatórios personalizados.
+Olá! Meu nome é Jocimara, tenho 24 anos, profissional de Dados e Business Intelligence, com mais de 3 anos de experiência prática em soluções analíticas, manipulação de dados e implementação de painéis e relatórios personalizados.
 
-|🔗 LinkedIn: [Meu Perfil](https://www.linkedin.com/in/seu-linkedin)  
-|📧 E-mail: seu.email@email.com  
+|🔗 LinkedIn: https://www.linkedin.com/in/jocimaraferreira
+|📧 E-mail: joohadsferreira@gmail.com
 |📍 Brasil
 
 **Competências:**
@@ -44,6 +44,4 @@ Olá! Meu nome é João, profissional de Dados e Business Intelligence, com expe
 - 📊 Relatórios em JasperReports
 - 📈 Implementação de KPIs e Métricas
 - 📊 Métricas Gerenciais/Financeiras em dados ERP
-
-Atualmente trabalho como Analista de Business BI numa **ERP Data-empersa** com dicatibilidade. Entrando na Jasper BI vindo liderança finace;...
 
