@@ -1,94 +1,80 @@
-# 📊 analytic-reports-by-jooh
+# analytic-reports-by-jooh
 
-<p align="center">
-  ✨ Business Intelligence • SQL • HQL • Java • JasperReports ✨
-</p>
+Repositório de exemplos técnicos para **Business Intelligence, Analytics e relatórios operacionais**, combinando consultas SQL, consultas HQL, utilitários Java 8, templates JasperReports e descrições de dashboards.
 
-<p align="center">
-  Repositório criado para compartilhar exemplos de análises, relatórios, dashboards e soluções BI desenvolvidas com foco em dados, performance e visualização 💖
-</p>
+O conteúdo é demonstrativo, genérico e anonimizado. A proposta é documentar padrões reutilizáveis para criação de indicadores, projeções analíticas e relatórios sem depender de um banco, sistema interno ou massa de dados real.
 
----
+## O que existe neste repositório
 
-# 🌸 Sobre o projeto
+- Consultas **SQL** para KPIs mensais de vendas, funil operacional de atendimento e coorte de retenção.
+- Consultas **HQL** equivalentes para cenários em aplicações Java com entidades fictícias.
+- Um módulo **Java 8/Maven** com DTO, cálculos de KPI e factories para `JRBeanCollectionDataSource`.
+- Templates **JasperReports (`.jrxml`)** para relatórios de vendas e SLA.
+- Documentos de **dashboards de exemplo** descrevendo objetivos, KPIs, visualizações sugeridas e fontes.
+- Diretrizes de privacidade e anonimização para manter os exemplos sem dados sensíveis.
 
-O **analytic-reports-by-jooh** reúne exemplos práticos de:
+## Estrutura atual
 
-💻 Consultas SQL e HQL
-📊 Estruturas analíticas para Business Intelligence
-☕ Desenvolvimento backend com Java 8
-🧠 Processamento e manipulação de dados
-📈 Indicadores, métricas e KPIs
-🎨 Layouts desenvolvidos no JasperReports Studio
-📑 Relatórios analíticos e operacionais
-⚡ Otimização de consultas e performance
-🔍 Exemplos de lógica aplicada em BI e geração de relatórios
-
-O objetivo do projeto é funcionar como um mini framework profissional de BI / Analytics em Java 8 + HQL + SQL + JasperReports, com exemplos reutilizáveis para portfólio, documentação e estudos técnicos.
-
-> Observação: os exemplos deste repositório foram generalizados e anonimizados. Eles não utilizam dados reais, nomes de empresas, identificadores internos ou informações pessoais.
-
----
-
-# 📂 Estrutura do Repositório
-
-```bash
-📁 sql/
-   ├── README.md
-   ├── kpi_vendas_mensais.sql
-   ├── analise_funil_atendimento.sql
-   └── coorte_retencao_clientes.sql
-
-📁 hql/
-   ├── README.md
-   ├── vendas_por_categoria.hql
-   ├── sla_atendimento_por_fila.hql
-   └── retencao_clientes.hql
-
-📁 java/
-   ├── README.md
-   ├── pom.xml
-   └── src/main/java/com/example/bi/
-       ├── KpiResult.java
-       ├── KpiCalculator.java
-       └── ReportDataSourceFactory.java
-
-📁 jasper/
-   ├── README.md
-   ├── relatorio_kpi_vendas.jrxml
-   └── relatorio_sla_atendimento.jrxml
-
-📁 dashboard-examples/
-   ├── README.md
-   ├── vendas-executivo.md
-   ├── operacional-sla.md
-   └── retencao-clientes.md
-
-📁 docs/
-   └── privacidade-e-anonimizacao.md
+```text
+.
+├── README.md
+├── dashboard-examples/
+│   ├── README.md
+│   ├── operacional-sla.md
+│   ├── retencao-clientes.md
+│   └── vendas-executivo.md
+├── docs/
+│   └── privacidade-e-anonimizacao.md
+├── hql/
+│   ├── README.md
+│   ├── retencao_clientes.hql
+│   ├── sla_atendimento_por_fila.hql
+│   └── vendas_por_categoria.hql
+├── jasper/
+│   ├── README.md
+│   ├── relatorio_kpi_vendas.jrxml
+│   └── relatorio_sla_atendimento.jrxml
+├── java/
+│   ├── README.md
+│   ├── pom.xml
+│   └── src/main/java/com/example/bi/
+│       ├── KpiCalculator.java
+│       ├── KpiResult.java
+│       └── ReportDataSourceFactory.java
+└── sql/
+    ├── README.md
+    ├── analise_funil_atendimento.sql
+    ├── coorte_retencao_clientes.sql
+    └── kpi_vendas_mensais.sql
 ```
 
----
+## Como as partes se conectam
 
-# 🧱 Arquitetura BI proposta
+1. **SQL (`sql/`)**: representa uma camada analítica sobre tabelas fictícias de DW, como `fato_vendas`, `fato_atendimento`, `dim_tempo`, `dim_produto`, `dim_cliente` e `dim_fila`.
+2. **HQL (`hql/`)**: mostra como consultas semelhantes poderiam ser escritas sobre entidades fictícias de domínio, como `Venda`, `ItemVenda`, `Produto`, `Cliente`, `Atendimento`, `FilaAtendimento` e `Analista`.
+3. **Java (`java/`)**: concentra objetos e utilitários para tratar resultados de KPI em memória:
+   - `KpiResult`: DTO imutável para período, dimensão, receita, custo, desconto, volume e métricas derivadas.
+   - `KpiCalculator`: métodos estáticos para divisão segura, percentual, ticket médio, margem, variação, classificação e agregação.
+   - `ReportDataSourceFactory`: criação de `JRBeanCollectionDataSource` a partir de listas de DTOs, mapas ou coleções.
+4. **JasperReports (`jasper/`)**: contém templates `.jrxml` genéricos para consumo de datasets compatíveis com os aliases/documentos do repositório.
+5. **Dashboards (`dashboard-examples/`)**: documenta painéis esperados e aponta para as consultas, classes e templates que podem alimentá-los.
 
-1. **Queries (HQL/SQL)**: agregações, percentuais, filtros dinâmicos e aliases analíticos.
-2. **DTOs de BI**: `KpiResult` consolida período, dimensão, valores financeiros e métricas derivadas.
-3. **Utility layer**: `KpiCalculator` calcula margem, ticket médio, variação percentual, classificações e agregações.
-4. **JasperReports**: templates JRXML com título, cards de KPI, tabela e gráficos.
-5. **Factory layer**: `ReportDataSourceFactory` padroniza `JRBeanCollectionDataSource` para DTOs e mapas.
+## Requisitos para o módulo Java
 
----
+- JDK compatível com Java 8 ou superior.
+- Maven.
+- A dependência principal declarada é `net.sf.jasperreports:jasperreports:6.21.3`.
 
-# 🔐 Privacidade e confidencialidade
+Para compilar o módulo Java:
 
-Os exemplos foram criados com foco em reutilização técnica e proteção de informações sensíveis:
+```bash
+mvn -f java/pom.xml test
+```
 
-- Nomes de entidades, tabelas e campos são fictícios.
-- Não existem dumps, massas de dados, credenciais ou strings de conexão.
-- Não há CPF, e-mail, telefone, endereço, contrato ou qualquer identificador pessoal.
-- Regras e métricas foram descritas de forma genérica para evitar exposição de contexto corporativo.
+> O repositório atualmente contém código-fonte e templates, mas não inclui base de dados, fixtures, dumps, credenciais, testes automatizados próprios ou scripts de execução de relatórios.
 
-Consulte `docs/privacidade-e-anonimizacao.md`
+## Privacidade e anonimização
 
----
+Todos os exemplos usam nomenclatura fictícia e agregada. Não há dados pessoais, credenciais, strings de conexão, dumps de banco ou nomes reais de empresas/clientes.
+
+Consulte [`docs/privacidade-e-anonimizacao.md`](docs/privacidade-e-anonimizacao.md) para as diretrizes aplicadas e cuidados recomendados em contribuições futuras.
