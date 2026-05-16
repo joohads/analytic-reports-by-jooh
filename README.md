@@ -35,7 +35,9 @@ O objetivo do projeto é funcionar como um mini framework profissional de BI / A
 Olá! Meu nome é Jocimara, tenho 24 anos, profissional de Dados e Business Intelligence, com mais de 3 anos de experiência prática em soluções analíticas, manipulação de dados e implementação de painéis e relatórios personalizados.
 
 |🔗 LinkedIn: https://www.linkedin.com/in/jocimaraferreira
+
 |📧 E-mail: joohadsferreira@gmail.com
+
 |📍 Brasil
 
 **Competências:**
